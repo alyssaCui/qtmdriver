@@ -33,6 +33,7 @@ public:
 	void HandleQlogout(std::vector<string> &);
 	void HandleTconn(std::vector<string> &);
 	void HandleTlogin(std::vector<string> &);
+	void HandleTlogout(std::vector<string> &);
 	void HandleOrder(std::vector<string> &);
 	void HandleCriteria(std::vector<string> &);
 	void HandleQinterrupt(std::vector<string> &);

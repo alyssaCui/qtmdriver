@@ -89,9 +89,9 @@ criteria ordertimeout x    //设置报单延时的阈值为x秒（默认5秒）
 	//tsubs 10 1      通道t10订阅行情成功
 	//tsubs 12 -1      通道t12订阅行情失败
 	
-	qlogout quote_idx status 	
+	tlogout quote_idx status 	
 	//tlogout 10 1      通道t10登出成功
-	//tlogout 12 -1      通道t12登出失败	
+	//tlogout 12 -1     通道t12登出失败	
 	
 	
 3）产生一个报单

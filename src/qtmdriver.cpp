@@ -120,6 +120,10 @@ void  QtmDriver::ParseCmd(char *pCmd)
 	{
 		HandleTlogin(vecSplitted);
 	}
+	else if(NULL != strstr(pCmd,"tlogout"))
+	{
+		HandleTlogout(vecSplitted);
+	}
 	else if(NULL != strstr(pCmd,"order"))
 	{
 		HandleOrder(vecSplitted);
@@ -415,6 +419,40 @@ void QtmDriver::HandleTlogin(std::vector<string> & vecSplitted)
 		}
 	}
 }
+
+void QtmDriver::HandleTlogout(std::vector<string> & vecSplitted)
+{
+	int tIdx = -1;
+	int status = -1;
+	
+	if(3 == vecSplitted.size())
+	{
+		tIdx = atoi(vecSplitted[1].c_str());
+		status= atoi(vecSplitted[2].c_str());
+		
+		////status:0--success , 1--fail
+		switch(status)
+		{
+		case 1:
+			{
+				update_connection_state(m_tunnel_idx[tIdx], TYPE_TCA, 1, "succeeded to logout");
+				m_tunnel_connected[tIdx] = true;
+				g_log.info("update_connection_state(%d,TYPE_TCA,1,\"succeeded to logout\")\n",m_tunnel_idx[tIdx]);
+			}
+			break;
+		case -1:
+			{
+				update_connection_state(m_tunnel_idx[tIdx], TYPE_TCA, -1, "Failed to logout");
+				g_log.info("update_connection_state(%d,TYPE_TCA,-1,\"Failed to logout\")\n",m_tunnel_idx[tIdx]);
+			}
+			break;
+		default:
+			g_log.error("[%s]No defined stauts:%d",__FUNCTION__,status);
+			break;			
+		}
+	}
+}
+
 
 void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 {
