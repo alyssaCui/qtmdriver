@@ -416,65 +416,6 @@ void QtmDriver::HandleTlogin(std::vector<string> & vecSplitted)
 	}
 }
 
-
-void *QtmDriver::handleQuote(void *para)
-{
-	char time_str[LENGTH_CMD];
-	char name[LEN_NAME] = {0};
-	int iIdx = -1;
-	
-	QuoteIdx *pInput = (QuoteIdx *)para;	
-	QtmDriver *pInst = (QtmDriver*)pInput->pDriverInstance;
-	iIdx = pInput->quote_idx;
-	
-	sprintf(name,"q%d_%d",iIdx,pInst->m_pid);
-	pInst->m_quote_idx[iIdx] += pInst->m_pid;
-	set_identification(pInst->m_quote_idx[iIdx],name);
-	g_log.info("set_identification(%d,%s)\n",pInst->m_quote_idx[iIdx],name);
-
-	while(1)
-	{
-		if(!pInst->m_quote_connected[iIdx])
-		{
-			sleep(1);
-			continue;
-		}
-
-		if(pInst->m_quote_interrupt[iIdx])
-		{
-			sleep(pInst->m_sec_interrupt);
-			pInst->m_quote_interrupt[iIdx] = false;
-			continue;
-		}
-		
-		if(pInst->m_quote_loss[iIdx])
-		{
-			sleep(pInst->m_sec_data_loss);
-			pInst->m_quote_loss[iIdx] = false;
-			continue;
-		}
-		
-		if(pInst->m_quote_delay[iIdx])
-		{
-			GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
-			sleep(pInst->m_sec_data_delay);
-			acquire_quote_time_field(pInst->m_quote_idx[iIdx],time_str);
-			g_log.info("acquire_quote_time_field(%d,%s)\n",pInst->m_quote_idx[iIdx],time_str);
-			
-			pInst->m_quote_delay[iIdx] = false;
-		}
-		
-		GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
-		acquire_quote_time_field(pInst->m_quote_idx[iIdx],time_str);
-		g_log.info("acquire_quote_time_field(%d,%s)\n",pInst->m_quote_idx[iIdx],time_str);
-		
-		usleep(1000*pInst->m_quote_interval[iIdx]);
-	}
-	
-	return NULL;
-}
-
-
 void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 {
 	int tIdx = -1;
@@ -1101,6 +1042,126 @@ void QtmDriver::HandleQdelay(std::vector<string> & vecSplitted)
 		i = atoi(vecSplitted[1].c_str());
 		m_quote_delay[i] = true;
 	}
+}
+
+void *QtmDriver::handleQuote(void *para)
+{
+	char time_str[LENGTH_CMD];
+	char name[LEN_NAME] = {0};
+	int iIdx = -1;
+	
+	QuoteIdx *pInput = (QuoteIdx *)para;	
+	QtmDriver *pInst = (QtmDriver*)pInput->pDriverInstance;
+	iIdx = pInput->quote_idx;
+	
+	sprintf(name,"q%d_%d",iIdx,pInst->m_pid);
+	pInst->m_quote_idx[iIdx] += pInst->m_pid;
+	set_identification(pInst->m_quote_idx[iIdx],name);
+	g_log.info("set_identification(%d,%s)\n",pInst->m_quote_idx[iIdx],name);
+
+	while(1)
+	{
+		if(!pInst->m_quote_connected[iIdx])
+		{
+			sleep(1);
+			continue;
+		}
+
+		if(pInst->m_quote_interrupt[iIdx])
+		{
+			pInst->QuoteInterrupt(iIdx);
+			
+			pInst->m_quote_interrupt[iIdx] = false;
+			continue;
+		}
+		
+		if(pInst->m_quote_loss[iIdx])
+		{
+			pInst->QuoteLoss(iIdx);
+			
+			pInst->m_quote_loss[iIdx] = false;
+			continue;
+		}
+		
+		if(pInst->m_quote_delay[iIdx])
+		{
+			pInst->QuoteDelay(iIdx);
+			
+			pInst->m_quote_delay[iIdx] = false;			
+			continue;
+		}
+		
+		GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+		acquire_quote_time_field(pInst->m_quote_idx[iIdx],time_str);
+		g_log.info("acquire_quote_time_field(%d,%s)\n",pInst->m_quote_idx[iIdx],time_str);
+		
+		usleep(1000*pInst->m_quote_interval[iIdx]);
+	}
+	
+	return NULL;
+}
+
+
+
+void QtmDriver::QuoteInterrupt(int iIdx)
+{
+	char time_str[LENGTH_CMD];
+
+	sleep(m_sec_interrupt);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+	
+	usleep(1000*m_quote_interval[iIdx]);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+	
+	sleep(m_sec_interrupt - 1);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+
+}
+
+void QtmDriver::QuoteLoss(int iIdx)
+{
+	char time_str[LENGTH_CMD];
+
+	sleep(m_sec_data_loss);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+
+	usleep(1000*m_quote_interval[iIdx]);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+
+	sleep(m_sec_data_loss - 1);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+}
+
+void QtmDriver::QuoteDelay(int iIdx)
+{
+	char time_str[LENGTH_CMD];
+	
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	sleep(m_sec_data_delay);
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+
+	usleep(1000*m_quote_interval[iIdx]);
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
+
+	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
+	sleep(m_sec_data_delay - 1);
+	acquire_quote_time_field(m_quote_idx[iIdx],time_str);
+	g_log.info("acquire_quote_time_field(%d,%s)\n",m_quote_idx[iIdx],time_str);
 }
 
 int main(int argc,char **agrv)

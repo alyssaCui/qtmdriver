@@ -38,6 +38,10 @@ public:
 	void HandleQinterrupt(std::vector<string> &);
 	void HandleQloss(std::vector<string> &);
 	void HandleQdelay(std::vector<string> &);
+	
+	void QuoteInterrupt(int iIdx);
+	void QuoteLoss(int iIdx);
+	void QuoteDelay(int iIdx);
 	LockFreeQueue<CMD>* GetQueue(){return &m_queue;}
 	
 private:
