@@ -482,12 +482,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -499,17 +499,17 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -523,12 +523,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -540,22 +540,22 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -567,17 +567,17 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -589,27 +589,27 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -621,12 +621,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -638,12 +638,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -655,17 +655,17 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -680,17 +680,17 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -702,22 +702,22 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -729,27 +729,27 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -763,17 +763,17 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval+TIME_DELTA); 			
+				usleep(m_order_rtn_interval + TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -784,12 +784,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval+TIME_DELTA); 			
+				usleep(m_order_rtn_interval + TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -799,7 +799,7 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -810,17 +810,16 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval+TIME_DELTA); 			
+				usleep(m_order_rtn_interval + TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				//usleep(order_rtn_interval); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -829,7 +828,7 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -844,17 +843,17 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA); 			
+				usleep(m_order_rtn_interval + TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -866,22 +865,22 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA);				
+				usleep(m_order_rtn_interval + TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval+TIME_DELTA); 			
+				usleep(m_order_rtn_interval + TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_cancel_rtn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -893,12 +892,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(30, act_request, now*(long)1e6,999);
 				g_log.info("acquire_tca_order(30,act_request,%ld,999)\n",now*(long)1e6);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(30, act_response, now*(long)1e6, 999);
 				g_log.info("acquire_tca_order(30,act_response,%ld,999)\n",now*(long)1e6);
 
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(30, act_tradertn, now*(long)1e6, 999);				
 				g_log.info("acquire_tca_order(30,act_tradertn,%ld,999)\n",now*(long)1e6);
@@ -910,12 +909,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, 9, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,9,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, 9, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,9,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, 9, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,9,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -923,7 +922,7 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 			break;
 		case 24://不存在的单号的报单回报
 			{
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, 888);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,888)\n",tIdx,now*(long)1e6);
@@ -931,7 +930,7 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 			break;
 		case 25://不存在的单号的成交回报
 			{
-				usleep(m_order_rtn_interval); 			
+				usleep(m_order_rtn_interval - TIME_DELTA); 			
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, 777);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,777)\n",tIdx,now*(long)1e6);
@@ -961,12 +960,12 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_response, now*(long)1e6, m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_response,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -985,7 +984,7 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 				acquire_tca_order(tIdx, act_request, now*(long)1e6,m_tunnel_seq_no[i]);
 				g_log.info("acquire_tca_order(%d,act_request,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
 				
-				usleep(m_order_rtn_interval);				
+				usleep(m_order_rtn_interval - TIME_DELTA);				
 				time(&now);
 				acquire_tca_order(tIdx, act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
 				g_log.info("acquire_tca_order(%d,act_tradertn,%ld,%ld)\n",tIdx,now*(long)1e6,m_tunnel_seq_no[i]);
@@ -1041,6 +1040,8 @@ void QtmDriver::HandleCriteria(std::vector<string> & vecSplitted)
 			
 			set_criteria(&data);
 			g_log.info("set_criteria(interrupt=%d,data_loss=%d,tca_time_out=%d)\n",data.interrupt,data.data_loss,data.tca_time_out);
+
+			m_order_rtn_interval = data.tca_time_out*1000000;
 		}
 		else
 		{

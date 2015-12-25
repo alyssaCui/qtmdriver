@@ -6,8 +6,8 @@
 #include "listenCmd.hpp"
 
 #define MAX_QUOTE 8
-#define TIME_ORDER_DELAY_DEFAULT 4900000
-#define TIME_DELTA 200000
+#define TIME_ORDER_DELAY_DEFAULT 5000000
+#define TIME_DELTA 100000 
 #define LEN_NAME 16
 
 struct QuoteIdx
