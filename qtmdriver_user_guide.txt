@@ -19,16 +19,18 @@ tnum 3      //设置有3个通道
 
 ##########################################################	
 设置阈值
-criteria interrupt x       //设置行情中断的阈值为x秒（默认5秒）
-criteria dataloss  x       //设置行情丢失的阈值为x秒（默认2秒）
-criteria delay x           //设置行情延时的阈值为x秒（默认3秒）
-criteria ordertimeout x    //设置报单延时的阈值为x秒（默认5秒）
+criteria qinter x      //设置行情中断的阈值为x秒（默认5秒）
+criteria qloss  x      //设置行情丢失的阈值为x秒（默认2秒）
+criteria qdelay x      //设置行情延时的阈值为x秒（默认3秒）
+criteria timeout x     //设置报单延时的阈值为x秒（默认5秒）
 
 ##########################################################
 行情所支持的设置命令
 1）设置行情路数
 	qnum x
 	//x取值范围为1~8，对应的行情的索引为0~7，名称为q0~q7
+	//行情的命名规则：qindex_pid，例如q0_4679(0是通道的索引，4679是进程ID)
+	//每次运行qtmdriver，这个命令只能执行一次
 	
 2）设置某路行情的时间间隔
 	qinterval quote_idx time
@@ -58,8 +60,8 @@ criteria ordertimeout x    //设置报单延时的阈值为x秒（默认5秒）
 	（2）如果在接收行情的过程中出现连接断开、登出，行情接收将会中断。
 	
 4）设置某路行情的接收状态
-	qinterrupt quote_idx    
-	//qinterrupt 0    行情q0中断
+	qinter quote_idx    
+	//qinter 0    行情q0中断
 	
 	qloss quote_idx
 	//qloss 0    行情q0丢失一条数据
@@ -72,8 +74,10 @@ criteria ordertimeout x    //设置报单延时的阈值为x秒（默认5秒）
 通道所支持的设置命令
 1）设置行情路数
 	tnum x
-	//x取值范围为1~8，对应的通道的索引为10~17，名称为t0~t7
-	//行情和通道的索引不能重复
+	//x取值范围为1~8，对应的通道的索引为0~7，名称为t0~t7
+	//通道的命名规则：tindex_pid，例如t0_4679(0是通道的索引，4679是进程ID)
+	//每次运行qtmdriver，这个命令只能执行一次
+
 	
 2）设置通道的连接状态
 	tconn tunnel_idx status	

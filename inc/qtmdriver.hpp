@@ -6,9 +6,12 @@
 #include "listenCmd.hpp"
 
 #define MAX_QUOTE 8
-#define TIME_ORDER_DELAY_DEFAULT 5000000
-#define TIME_DELTA 100000 
-#define LEN_NAME 16
+#define TIME_ORDER_DELAY_NS_DEFAULT 5000000
+#define TIME_DELTA    100000 
+#define TIME_DELTA_NS 1000 
+#define LEN_NAME 32
+
+#define printf_green(x,...) printf("\e[32m");printf(x,## __VA_ARGS__);printf("\033[0m");
 
 struct QuoteIdx
 {
@@ -55,22 +58,25 @@ private:
 	int m_quote_interval[MAX_QUOTE];	//ms
 	pthread_t m_quote_tid[MAX_QUOTE];
 	int m_quote_idx[MAX_QUOTE];
+	char m_quote_name[MAX_QUOTE][LEN_NAME];
 	bool m_quote_connected[MAX_QUOTE];
+	bool m_quote_normal[MAX_QUOTE];
 	bool m_quote_interrupt[MAX_QUOTE];
 	bool m_quote_loss[MAX_QUOTE];
 	bool m_quote_delay[MAX_QUOTE];
 	QuoteIdx m_qPara[MAX_QUOTE];
 	
 	int m_tunnel_num;
+	char m_tunnel_name[MAX_QUOTE][LEN_NAME];
 	int m_order_rtn_interval;
 	int m_tunnel_idx[MAX_QUOTE];
 	bool m_tunnel_connected[MAX_QUOTE];
 	long m_tunnel_seq_no[MAX_QUOTE]; 
 
-	int m_sec_interrupt;
-	int m_sec_data_loss;	
-	int m_sec_data_delay;
-	int m_tca_time_out;
+	int m_sec_quote_interrupt;
+	int m_sec_quote_loss;	
+	int m_sec_quote_delay;
+	int m_order_timeout;
 };
 
 

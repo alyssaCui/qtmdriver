@@ -44,24 +44,83 @@ int GetNowTimeStr_HHMMSSmmm(char *pTime, int len)
 	return SUCC;
 }
 
-int GetBeforeTimeStr_HHMMSSmmm(char *pTime, int len,int iSecond)
+int GetBeforeTimeStr_HHMMSSmmm(char *pTime, int len,int idelta_ms)
 {
 	struct timeval t_cur;
 	struct tm *t, tbuf;
-	long lBeforeSec;
+	int iNow_ms;
+	long lBeforeSec = 0;
+	int iBeforeMS = 0;
 	
 	gettimeofday(&t_cur, (struct timezone *)0);
-	lBeforeSec = t_cur.tv_sec - iSecond;
-	t = localtime_r(&lBeforeSec, &tbuf);
+	iNow_ms = (t_cur.tv_usec)/1000;
+	
+	iBeforeMS = idelta_ms%1000;
+	if(iBeforeMS <= iNow_ms)
+	{
+		lBeforeSec = t_cur.tv_sec - idelta_ms/1000;
+		t = localtime_r(&lBeforeSec, &tbuf);
 
-	bzero(pTime, len);
-	snprintf(pTime, len, "%02d:%02d:%02d.%03d",
-			 t->tm_hour,
-			 t->tm_min,
-			 t->tm_sec,
-			 (unsigned int)(t_cur.tv_usec)/1000
-			);
+		bzero(pTime, len);
+		snprintf(pTime, len, "%02d:%02d:%02d.%03d",
+				 t->tm_hour,
+				 t->tm_min,
+				 t->tm_sec,
+				 (iNow_ms - iBeforeMS));
+	}
+	else
+	{
+		lBeforeSec = t_cur.tv_sec - idelta_ms/1000 + 1;
+		t = localtime_r(&lBeforeSec, &tbuf);
 
+		bzero(pTime, len);
+		snprintf(pTime, len, "%02d:%02d:%02d.%03d",
+				 t->tm_hour,
+				 t->tm_min,
+				 t->tm_sec,
+				 (iNow_ms - iBeforeMS + 1000));
+	}
+	
+	return SUCC;
+}
+
+int GetBeforeTimeStr_HHMMSSmmm(char *pTime, int len, struct timeval *pNow, int idelta_ms)
+{
+	struct tm *t, tbuf;
+	int i_ms_now;
+	long lBeforeSec = 0;
+	int i_ms_delta = 0;
+	int i_s_delta = 0;
+	
+	i_ms_now = (pNow->tv_usec)/1000;
+	i_ms_delta = idelta_ms%1000;
+	i_s_delta = idelta_ms/1000;
+	
+	if(i_ms_delta <= i_ms_now)
+	{
+		lBeforeSec = pNow->tv_sec - i_s_delta;
+		t = localtime_r(&lBeforeSec, &tbuf);
+
+		bzero(pTime, len);
+		snprintf(pTime, len, "%02d:%02d:%02d.%03d",
+				 t->tm_hour,
+				 t->tm_min,
+				 t->tm_sec,
+				 (i_ms_now - i_ms_delta));
+	}
+	else
+	{
+		lBeforeSec = pNow->tv_sec - i_s_delta - 1;
+		t = localtime_r(&lBeforeSec, &tbuf);
+
+		bzero(pTime, len);
+		snprintf(pTime, len, "%02d:%02d:%02d.%03d",
+				 t->tm_hour,
+				 t->tm_min,
+				 t->tm_sec,
+				 (i_ms_now - i_ms_delta + 1000));
+	}
+	
 	return SUCC;
 }
 

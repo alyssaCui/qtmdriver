@@ -46,7 +46,8 @@ enum WORKITEM_STATUS_TYPE
 struct timeval utils_get_time();
 
 int GetNowTimeStr_HHMMSSmmm(char *pTime, int len);
-int GetBeforeTimeStr_HHMMSSmmm(char *pTime, int len,int iSecond);
+int GetBeforeTimeStr_HHMMSSmmm(char *pTime, int len,int idelta_ms);
+int GetBeforeTimeStr_HHMMSSmmm(char *pTime, int len, struct timeval *pTv, int idelta_ms);
 char * getTimeStr_YYMMDD_HHMMSS(char *str, int len);
 
 char * getTimeStr_YYYYMMDD_HHMMSS(char *str, int len);
