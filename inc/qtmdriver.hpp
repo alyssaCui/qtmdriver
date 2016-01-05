@@ -41,8 +41,8 @@ public:
 	void HandleCriteria(std::vector<string> &);
 	void HandleQinterrupt(std::vector<string> &);
 	void HandleQloss(std::vector<string> &);
-	void HandleQdelay(std::vector<string> &);
-	
+	void HandleQdelay(std::vector<string> &);	
+	void HandlePrint(std::vector<string> &);
 	void QuoteInterrupt(int iIdx);
 	void QuoteLoss(int iIdx);
 	void QuoteDelay(int iIdx);

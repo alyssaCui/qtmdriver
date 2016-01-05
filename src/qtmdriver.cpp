@@ -4,7 +4,7 @@
 #include <vector>
 
 CLog g_log;
-
+bool gIsPrint = true;
 
 int QtmDriver::init()
 {
@@ -144,6 +144,10 @@ void  QtmDriver::ParseCmd(char *pCmd)
 	else if(NULL != strstr(pCmd,"qdelay"))
 	{
 		HandleQdelay(vecSplitted);
+	}
+	else if(NULL != strstr(pCmd,"print"))
+	{
+		HandlePrint(vecSplitted);
 	}
 	else
 	{
@@ -1087,6 +1091,26 @@ void QtmDriver::HandleQdelay(std::vector<string> & vecSplitted)
 	}
 }
 
+void QtmDriver::HandlePrint(std::vector<string> & vecSplitted)
+{
+	if(2 == vecSplitted.size())
+	{		
+		if (strcasecmp(vecSplitted[1].c_str(), "on") == 0)
+		{
+			gIsPrint = true;
+		}
+		else if (strcasecmp(vecSplitted[1].c_str(), "off") == 0)
+		{
+			gIsPrint = false;
+		}
+		else
+		{
+			g_log.info("No defined cmd: print %s !\n",vecSplitted[1].c_str());
+		}
+	}
+}
+
+
 void *QtmDriver::handleQuote(void *para)
 {
 	char time_str[LENGTH_CMD];
@@ -1113,7 +1137,11 @@ void *QtmDriver::handleQuote(void *para)
 		{
 			GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
 			acquire_quote_time_field(pInst->m_quote_name[iIdx],time_str);
-			g_log.info("acquire_quote_time_field(%s,%s)\n",pInst->m_quote_name[iIdx],time_str);
+
+			if(gIsPrint)
+			{
+				g_log.info("acquire_quote_time_field(%s,%s)\n",pInst->m_quote_name[iIdx],time_str);
+			}
 		}
 		else
 		{
