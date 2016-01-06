@@ -127,10 +127,12 @@ int CLog::writeLog(LOG_LEVEL_TYPE logLevel, const char* logContent, const char* 
 	}
 
 	//get time
-	struct timeval t_cur;
+	//struct timeval t_cur;
+	struct timespec t_cur = {0, 0};
 	struct tm *t, tbuf;
 	
-	gettimeofday(&t_cur, (struct timezone *)0);
+	//gettimeofday(&t_cur, (struct timezone *)0);
+	clock_gettime(CLOCK_REALTIME_COARSE, &t_cur);
 	t = localtime_r(&(t_cur.tv_sec), &tbuf);
 
 	char timeStr[100] = {0};
@@ -142,7 +144,7 @@ int CLog::writeLog(LOG_LEVEL_TYPE logLevel, const char* logContent, const char* 
 	    sprintf(timeStr, "%02d%02d_%02d:%02d:%02d.%06d",
 			t->tm_mon+1,t->tm_mday,
 			t->tm_hour, t->tm_min, t->tm_sec,
-			(unsigned int)(t_cur.tv_usec));
+			(unsigned int)(t_cur.tv_nsec/1000));
 	}
 	else
 	{
