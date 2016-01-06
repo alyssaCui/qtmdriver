@@ -471,8 +471,8 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		
 		type= atoi(vecSplitted[2].c_str());
 
-		lInterval = m_order_rtn_interval - TIME_DELTA_NS;
-		gInterval = m_order_rtn_interval + TIME_DELTA_NS;
+		lInterval = m_order_rtn_interval - TIME_DELTA_US;
+		gInterval = m_order_rtn_interval + TIME_DELTA_US;
 		
 		switch(type)
 		{
@@ -1008,7 +1008,9 @@ void QtmDriver::HandleCriteria(std::vector<string> & vecSplitted)
 	{		
 		if (strcasecmp(vecSplitted[1].c_str(), "qinter") == 0)
 		{
-			data.quote_interrupt = atoi(vecSplitted[2].c_str());
+			m_sec_quote_interrupt = atoi(vecSplitted[2].c_str());
+			
+			data.quote_interrupt = m_sec_quote_interrupt;
 			data.quote_loss = m_sec_quote_loss;
 			data.quote_delay = m_sec_quote_delay;
 			data.order_timeout = m_order_timeout;
@@ -1018,7 +1020,9 @@ void QtmDriver::HandleCriteria(std::vector<string> & vecSplitted)
 		}
 		else if (strcasecmp(vecSplitted[1].c_str(), "qloss") == 0)
 		{
-			data.quote_loss = atoi(vecSplitted[2].c_str());
+			m_sec_quote_loss = atoi(vecSplitted[2].c_str());
+			
+			data.quote_loss = m_sec_quote_loss;
 			data.quote_interrupt = m_sec_quote_interrupt;
 			data.quote_delay = m_sec_quote_delay;
 			data.order_timeout = m_order_timeout;
@@ -1028,7 +1032,9 @@ void QtmDriver::HandleCriteria(std::vector<string> & vecSplitted)
 		}
 		else if (strcasecmp(vecSplitted[1].c_str(), "qdelay") == 0)
 		{
-			data.quote_delay = atoi(vecSplitted[2].c_str());
+			m_sec_quote_delay = atoi(vecSplitted[2].c_str());
+			
+			data.quote_delay = m_sec_quote_delay;
 			data.quote_interrupt = m_sec_quote_interrupt;
 			data.quote_loss = m_sec_quote_loss;
 			data.order_timeout = m_order_timeout;
@@ -1038,7 +1044,9 @@ void QtmDriver::HandleCriteria(std::vector<string> & vecSplitted)
 		}
 		else if (strcasecmp(vecSplitted[1].c_str(), "timeout") == 0)
 		{
-			data.order_timeout = atoi(vecSplitted[2].c_str());
+			m_order_timeout = atoi(vecSplitted[2].c_str());
+			
+			data.order_timeout = m_order_timeout;
 			data.quote_interrupt = m_sec_quote_interrupt;
 			data.quote_loss = m_sec_quote_loss;
 			data.quote_delay = m_sec_quote_delay;
@@ -1188,9 +1196,10 @@ void QtmDriver::QuoteInterrupt(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_interrupt*1000000 + TIME_DELTA_NS;
-	printf_green("Quote interrupt %dms:\n",interval/1000);
-	usleep(interval);
+	//interval = m_sec_quote_interrupt*1000000 + TIME_DELTA_S;
+	interval = m_sec_quote_interrupt + TIME_DELTA_S;
+	printf_green("Quote interrupt %ds:\n",interval);
+	sleep(interval);
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
@@ -1200,9 +1209,18 @@ void QtmDriver::QuoteInterrupt(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_interrupt*1000000 - 2*TIME_DELTA_NS;
-	printf_green("Quote interrupt %dms:\n",interval/1000);
-	usleep(interval);
+	//interval = m_sec_quote_interrupt*1000000 - TIME_DELTA_S;
+	if(m_sec_quote_interrupt > TIME_DELTA_S)
+	{
+		interval = m_sec_quote_interrupt - TIME_DELTA_S;
+	}
+	else
+	{
+		g_log.error("quote interrupt cannot be less than 2 second !\n");
+	}
+	printf_green("Quote interrupt %ds:\n",interval);
+	//usleep(interval);
+	sleep(interval);
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
@@ -1220,7 +1238,7 @@ void QtmDriver::QuoteLoss(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_loss*1000000 + TIME_DELTA_NS;
+	interval = m_sec_quote_loss*1000000 + TIME_DELTA_US;
 	printf_green("Quote loss %dms:\n",interval/1000);
 	usleep(interval);
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
@@ -1232,7 +1250,7 @@ void QtmDriver::QuoteLoss(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_loss*1000000 - TIME_DELTA_NS;
+	interval = m_sec_quote_loss*1000000 - TIME_DELTA_US;
 	printf_green("Quote loss %dms:\n",interval/1000);
 	usleep(interval);
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
@@ -1246,22 +1264,26 @@ void QtmDriver::QuoteDelay(int iIdx)
 {
 	char time_str[LENGTH_CMD] = {0};
 	int cnt = 0;	
-	struct timeval t_cur;
+	//struct timeval t_cur;
+	struct timespec t_cur = {0, 0};
 	int interval = 0;
 
 	printf_green("Quote delay begin... ...\n");
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
+	
 
-	interval = m_sec_quote_delay*1000000;
-	printf_green("Quote delay %dms:\n",interval/1000);
-	usleep(interval);
-	gettimeofday(&t_cur, (struct timezone *)0);
-	cnt = m_sec_quote_delay*2;
-	for(int i=0;i<cnt;i++)
+	usleep(1000*m_quote_interval[iIdx]);
+	clock_gettime(CLOCK_REALTIME_COARSE, &t_cur);
+	interval = m_sec_quote_delay;               //unit:s
+	printf_green("Quote delay %ds:\n",interval);
+	sleep(interval);
+	cnt = m_sec_quote_delay*2;	
+	usleep(TIME_DELTA_US);
+	for(int i=0;i<cnt+1;i++)
 	{
-		GetBeforeTimeStr_HHMMSSmmm(time_str,sizeof(time_str),&t_cur,500*(cnt-i));
+		GetAfterTimeStr_HHMMSSmmm(time_str,sizeof(time_str),&t_cur,500*i);
 		acquire_quote_time_field(m_quote_name[iIdx],time_str);
 		g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 	}
@@ -1271,14 +1293,16 @@ void QtmDriver::QuoteDelay(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_delay*1000000 - 2*TIME_DELTA_NS;
+
+	usleep(1000*m_quote_interval[iIdx]);
+	clock_gettime(CLOCK_REALTIME_COARSE, &t_cur);
+	interval = m_sec_quote_delay*1000000 - TIME_DELTA_US;  //unit:us
 	printf_green("Quote delay %dms:\n",interval/1000);
-	usleep(interval);
-	gettimeofday(&t_cur, (struct timezone *)0);
+	usleep(interval);	
 	cnt = m_sec_quote_delay*2;
-	for(int i=0;i<cnt;i++)
+	for(int i=0;i<cnt+1;i++)
 	{
-		GetBeforeTimeStr_HHMMSSmmm(time_str,sizeof(time_str),&t_cur,500*(cnt-i));
+		GetAfterTimeStr_HHMMSSmmm(time_str,sizeof(time_str),&t_cur,500*i);
 		acquire_quote_time_field(m_quote_name[iIdx],time_str);
 		g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 	}

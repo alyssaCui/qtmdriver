@@ -9,6 +9,8 @@
 #define TIME_ORDER_DELAY_NS_DEFAULT 5000000
 #define TIME_DELTA    100000 
 #define TIME_DELTA_NS 1000 
+#define TIME_DELTA_US 5000
+#define TIME_DELTA_S  2 
 #define LEN_NAME 32
 
 #define printf_green(x,...) printf("\e[32m");printf(x,## __VA_ARGS__);printf("\033[0m");
