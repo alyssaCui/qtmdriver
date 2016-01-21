@@ -8,10 +8,9 @@ bool gIsPrint = true;
 
 int QtmDriver::init()
 {
-	//int flag = 0; 
 	m_quote_num = 0;
 	m_tunnel_num = 0;
-	m_order_rtn_interval = TIME_ORDER_DELAY_NS_DEFAULT;
+	m_order_rtn_interval = TIME_ORDER_DELAY_US_DEFAULT;
 	
 	m_sec_quote_interrupt = 5;
 	m_sec_quote_loss = 2;
@@ -366,8 +365,7 @@ void QtmDriver::HandleTconn(std::vector<string> & vecSplitted)
 		{
 		case 1:
 			{
-				update_connection_state(m_tunnel_name[tIdx], TYPE_TCA, 1, "succeeded to connect");
-				
+				update_connection_state(m_tunnel_name[tIdx], TYPE_TCA, 1, "succeeded to connect");				
 				g_log.info("update_connection_state(%s,TYPE_TCA,1,\"succeeded to connect\")\n",m_tunnel_name[tIdx]);
 			}
 			break;
@@ -433,7 +431,7 @@ void QtmDriver::HandleTlogout(std::vector<string> & vecSplitted)
 		case 1:
 			{
 				update_connection_state(m_tunnel_name[tIdx], TYPE_TCA, 1, "succeeded to logout");
-				m_tunnel_connected[tIdx] = true;
+				m_tunnel_connected[tIdx] = false;
 				g_log.info("update_connection_state(%s,TYPE_TCA,1,\"succeeded to logout\")\n",m_tunnel_name[tIdx]);
 			}
 			break;
@@ -453,8 +451,8 @@ void QtmDriver::HandleTlogout(std::vector<string> & vecSplitted)
 
 void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 {
+	//int tIdx = -1;
 	int tIdx = -1;
-	int i = -1;
 	int type = -1;	
 	int lInterval = -1;
 	int gInterval = -1;
@@ -464,9 +462,9 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 	{
 		tIdx = atoi(vecSplitted[1].c_str());
 		//tIdx = m_tunnel_idx[i];
-		if(false == m_tunnel_connected[i])
+		if(false == m_tunnel_connected[tIdx])
 		{
-			g_log.error("Tunnnel %d is not login ! please execute command\"qlogin %d 1\"\n",tIdx,i);
+			g_log.error("Tunnnel %d is not login ! please execute command\"tlogin %d 1\"\n",tIdx,tIdx);
 		}
 		
 		type= atoi(vecSplitted[2].c_str());
@@ -479,40 +477,40 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		case 1:  //一次全部成交
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 2:   //报单分两次成交
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		//case3:	报单部分成交(接口acquire_tca_order不对此做区分)
@@ -520,155 +518,155 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		case 4:  //报单后撤单，撤单成功
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 5:  //报单后撤单，单成交撤单失败
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 6:  //报单回报后撤单，撤单成功
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 7://报单回报后撤单，单成交撤销失败
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 8:  //报单回报延时，单全部成交
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 9:  //全部成交回报延时，单全部成交
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 10:  //单分两次成交回报，两个部分成交回报都延时，单全部成交
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		//case11:	部分成交，部分成交回报延时，单部分成交
@@ -677,82 +675,82 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		case 12:  //报单回报延时后撤单，撤单成功
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 13://报单回报延时后撤单，单全部成交撤单失败
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 14://报单回报延时后撤单，单分两次成交撤单失败
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		//case15:	报单回报延时后撤单，单部分成交部分撤单
@@ -760,78 +758,81 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		
 		case 16:  //成交回报延时后撤单，撤单成功
 			{
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(gInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 17:  //成交回报延时后撤单，单全部成交撤单失败
 			{
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(gInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				//usleep(order_rtn_interval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 18:  //成交回报延时后撤单，单分两次成交撤单失败
 			{
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(gInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		//19	成交回报延时后撤单，单部分成交部分撤单
@@ -840,50 +841,50 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		case 20:  //报单回报延时后撤单，撤单成功，但撤单回报延时
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 21://报单回报延时后撤单，单全部成交撤单失败，但撤单回报延时
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(gInterval); 			
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 22://不存在的通道报单
@@ -907,18 +908,18 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		case 23://未定义的动作
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], 9, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,9,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], 9, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,9,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], 9, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,9,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], 9, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,9,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], 9, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,9,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], 9, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,9,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 24://不存在的单号的报单回报
@@ -940,64 +941,131 @@ void QtmDriver::HandleOrder(std::vector<string> & vecSplitted)
 		case 26://不存在的单号撤单
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_request, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 27://不存在的撤单回报
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_cancel_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_cancel_rtn, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_cancel_rtn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 28://重复的报单单号
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 			}
 			break;
 			
 		case 29://时间戳不合规
 			{
-				acquire_tca_order(m_tunnel_name[tIdx], act_request,0,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,0,%ld)\n",m_tunnel_name[tIdx],m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request,0,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,0,%ld)\n",m_tunnel_name[tIdx],m_tunnel_seq_no[tIdx]);
 			}
 			break;
 		case 30://报单后没有收到报单回报，直接收到成交回报
 			{
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[i]);
-				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
 				
 				usleep(lInterval);				
 				time(&now);
-				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[i]);				
-				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[i]);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+			}
+			break;
+		case 31://第一个报单，报单回报超时，在第二个报单成交后才收到报单回报
+			{
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				
+				usleep(gInterval);	
+
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+				
+				usleep(lInterval);				
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]+1);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+
+				usleep(lInterval);				
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]+1);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+				
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+
+				m_tunnel_seq_no[tIdx]++;
+			}
+			break;
+		case 32://第一个报单，成交回报超时，在第二个报单成交后才收到成交回报
+			{
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+
+				usleep(lInterval);				
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+				
+				usleep(gInterval);	
+
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_request, now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+				g_log.info("acquire_tca_order(%s,act_request,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+				
+				usleep(lInterval);				
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_response, now*(long)1e6, m_tunnel_seq_no[tIdx]+1);
+				g_log.info("acquire_tca_order(%s,act_response,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]+1);
+
+				usleep(lInterval);				
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]+1);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]+1);				
+
+				time(&now);
+				acquire_tca_order(m_tunnel_name[tIdx], act_tradertn, now*(long)1e6, m_tunnel_seq_no[tIdx]);				
+				g_log.info("acquire_tca_order(%s,act_tradertn,%ld,%ld)\n",m_tunnel_name[tIdx],now*(long)1e6,m_tunnel_seq_no[tIdx]);
+
+				m_tunnel_seq_no[tIdx]++;
 			}
 			break;
 		default:
-			g_log.error("[%s]No defined type:%d",__FUNCTION__,type);
+			g_log.error("[%s]No defined type:%d\n",__FUNCTION__,type);
 			break;			
 		}
 	}
 	
-	m_tunnel_seq_no[i]++;
+	m_tunnel_seq_no[tIdx]++;
 }
 
 void QtmDriver::HandleCriteria(std::vector<string> & vecSplitted)
@@ -1238,7 +1306,7 @@ void QtmDriver::QuoteLoss(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_loss*1000000 + TIME_DELTA_US;
+	interval = m_sec_quote_loss*1000000 + TIME_US_5000;
 	printf_green("Quote loss %dms:\n",interval/1000);
 	usleep(interval);
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
@@ -1250,7 +1318,7 @@ void QtmDriver::QuoteLoss(int iIdx)
 	acquire_quote_time_field(m_quote_name[iIdx],time_str);
 	g_log.info("acquire_quote_time_field(%s,%s)\n",m_quote_name[iIdx],time_str);
 
-	interval = m_sec_quote_loss*1000000 - TIME_DELTA_US;
+	interval = m_sec_quote_loss*1000000 - TIME_US_5000;
 	printf_green("Quote loss %dms:\n",interval/1000);
 	usleep(interval);
 	GetNowTimeStr_HHMMSSmmm(time_str,sizeof(time_str));
@@ -1280,7 +1348,7 @@ void QtmDriver::QuoteDelay(int iIdx)
 	printf_green("Quote delay %ds:\n",interval);
 	sleep(interval);
 	cnt = m_sec_quote_delay*2;	
-	usleep(TIME_DELTA_US);
+	usleep(TIME_US_5000);
 	for(int i=0;i<cnt+1;i++)
 	{
 		GetAfterTimeStr_HHMMSSmmm(time_str,sizeof(time_str),&t_cur,500*i);
@@ -1296,7 +1364,7 @@ void QtmDriver::QuoteDelay(int iIdx)
 
 	usleep(1000*m_quote_interval[iIdx]);
 	clock_gettime(CLOCK_REALTIME_COARSE, &t_cur);
-	interval = m_sec_quote_delay*1000000 - TIME_DELTA_US;  //unit:us
+	interval = m_sec_quote_delay*1000000 - TIME_US_5000;  //unit:us
 	printf_green("Quote delay %dms:\n",interval/1000);
 	usleep(interval);	
 	cnt = m_sec_quote_delay*2;

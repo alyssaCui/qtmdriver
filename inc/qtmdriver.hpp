@@ -6,10 +6,11 @@
 #include "listenCmd.hpp"
 
 #define MAX_QUOTE 8
-#define TIME_ORDER_DELAY_NS_DEFAULT 5000000
+#define TIME_ORDER_DELAY_US_DEFAULT 5000000
 #define TIME_DELTA    100000 
 #define TIME_DELTA_NS 1000 
-#define TIME_DELTA_US 5000
+#define TIME_DELTA_US 2000000
+#define TIME_US_5000 5000
 #define TIME_DELTA_S  2 
 #define LEN_NAME 32
 

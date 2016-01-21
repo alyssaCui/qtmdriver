@@ -38,7 +38,9 @@ qtm_init(int type);
 typedef struct {
         int quote_delay; /* Quote delay, default to 3 seconds. */
         int quote_loss;  /* Quote data loss, default to 2 seconds. */
-        int quote_interrupt;  /* Quote interrupted, default to 5 seconds. */
+        int quote_interrupt;  /* Quote interrupted, default to 5 seconds, 
+                                maximium :10 seconds. 
+                               */
         int order_timeout;  /* Default to 5 seconds. */
 } criteria_t;
 
